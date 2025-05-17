@@ -1,0 +1,2 @@
+export const loginSuccess = (name : string) => { return `Login Successful! Welcome back, ${name || ''}` }
+export const logoutSuccess = (name : string) => { return `Logout Successful! Goodbye, ${`${name}!` || ''} See you next time!` }

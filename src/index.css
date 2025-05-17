@@ -1,0 +1,79 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  @apply select-none
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* login modal css */
+.log-modal-tab-active{
+  @apply bg-black text-white;
+}
+
+.log-modal-tab-inactive{
+  @apply bg-white text-black;
+}
+
+.nav-menu li{
+  @apply cursor-pointer hover:text-primary;
+}
+
+.header-drop-down::before {
+  content: " ";
+  position: absolute;
+  top: -14px; /* Adjust position */
+  left: 4px; /* Adjust based on dropdown width */
+  width: 18px;
+  height: 18px;
+  background-color: white;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* product css*/
+.card-action-button:hover .icon-fav, .card-action-button:hover .icon-cart{
+    @apply !fill-black
+}
+
+/* Sidebar css*/
+.sidebar-menu{
+  @apply h-10 sm:h-auto
+}
+.sidebar-menu-button{
+  @apply !rounded-md hover:!text-white hover:shadow-sm hover:!bg-primary sm:hover:!text-black sm:hover:shadow-md sm:hover:!bg-white
+}
+
+.sidebar-menu-button .icon{
+  @apply text-xl sm:text-2xl sm:text-white
+}
+
+.sidebar-menu-button:hover .icon{
+  @apply text-white sm:text-black
+}
+
+.admin-Content-view{
+  @apply my-2 sm:my-5 space-y-3 sm:space-y-6
+}
+
+.form-control-space-y{
+  @apply space-y-3
+}
+
+.profile-menu .menu-item{
+  @apply !text-xs sm:!text-sm !min-h-6 sm:!min-h-7 !p-1
+}
+.custom-scroll-bar, html{
+  @apply scrollbar-thin scrollbar-thumb-primary scrollbar-track-slate-200 
+}
+
+.line-height-0{
+  line-height: 0px;
+}

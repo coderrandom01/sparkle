@@ -1,0 +1,49 @@
+@tailwind utilities;
+
+.react-multi-carousel-dot button {
+ @apply bg-gray-200 border-none;
+}
+
+.react-multi-carousel-dot--active button{
+    @apply bg-primary;
+}
+
+
+.section {
+    @apply p-1 sm:p-5 px-1 sm:px-32;
+}
+
+.viewMore{
+    @apply flex justify-center items-center mt-2 sm:mt-5;
+}
+
+.step-action-div{
+    @apply flex items-center justify-center flex-col text-center space-y-2
+}
+
+.step-action-div img{
+    @apply h-14 w-14
+}
+
+.step-action-div h5{
+    @apply text-sm sm:text-base
+}
+
+.step-action-div p{
+    @apply text-xs sm:text-sm w-auto sm:w-64
+}
+
+.slick-dots li button:before{
+    font-size: 12px !important;
+}
+.slick-dots li.slick-active button:before{
+    color: #F68B29 !important;
+}
+
+
+@media screen and (max-width: 480px) {
+    .slick-dots{
+        display: none !important
+    } 
+}
+
