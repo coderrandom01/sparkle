@@ -64,32 +64,31 @@ query GetAllProductAdminTable($orderBy: SortInput, $limit: Int, $skip: Int) {
 export const GET_PRODUCT_BY_ID = gql`
 query GetProductById($getProductByIdId: ID!) {
   getProductById(id: $getProductByIdId) {
-    status
-    result
     responce {
       id
       title
       description
       category_id
-      size_and_price {
-        _id
-        size
-        price
-        discount
-        display_price
-        colors {
-          color
+      colors {
+        color
+        image
+        size_and_price {
+          _id
+          size
           available_count
           sold_out
+          price
+          discount
+          display_price
         }
       }
       status
-      image
       total_available_count
       explore_products
       new_arrivals
       top_selling_products
       clearance_sale
+      product_details
       createdAt
       updatedAt
     }
@@ -112,11 +111,8 @@ query GetProductById($getProductByIdId: ID!) {
           _id
           size
           available_count
-          sold_out
           price
-          discount
-          display_price
-        }
+          discount        }
       }
       status
       total_available_count

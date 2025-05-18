@@ -107,21 +107,48 @@ export default function AddListing() {
     setLoader(true)
     if (categoriesData && data) {
       console.log("datadata",data);
-      const editData = data.getProductById.responce;
-      console.log("editDataeditData",editData);
+      const cleanData = removeTypename(data.getProductById.responce)
+      const editData = cleanData;
+      console.log("editDataeditData",cleanData);
+const updatedColors = editData.colors.map(({ image, ...rest } : any) => ({
+  ...rest,
+  prevImage: [...image]
+}));
+
+      setColorFields(updatedColors)
       const categoriesResponse = categoriesData.getAllCategory.response;
       setEditedData(editData);
       const result = categoriesResponse.find((parent: { children: any[] }) => parent.children.some((child) => child._id === editData.category_id));
       const formData = { parent_category: result._id, category_id: editData.category_id, title: editData.title, description: editData.description};
       setListingToogles({ "top_selling_products": editData.top_selling_products, "clearance_sale": editData.clearance_sale, "new_arrivals": editData.new_arrivals, "explore_products": editData.explore_products })
-      const filedData = transformData(editData.size_and_price);
-      setFields(filedData);
+      // const filedData = transformData(editData.size_and_price);
+      // setFields(filedData);
       setFormData(formData);
       setChildOptions(result.children);
-      setOldImages(editData.image);
+      // setOldImages(editData.image);
     }
     setLoader(false)
-  }, [data]);
+  }, [data,categoriesData]);
+  useEffect(() => {
+  if (id) {
+    refetch(); // manually rehit the API
+  }
+}, [id]);
+function removeTypename(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(removeTypename);
+  } else if (obj !== null && typeof obj === 'object') {
+    const newObj: any = {};
+    for (const key in obj) {
+      if (key !== '__typename' && key !== '_id') {
+        newObj[key] = removeTypename(obj[key]);
+      }
+    }
+    return newObj;
+  }
+  return obj;
+}
+
   useEffect(() => {
     setLoader(true)
     if (categoriesData) {
@@ -406,10 +433,16 @@ const newColorFields = colorFields.map((color: any) => {
   const { prevImage, ...rest } = color;
   return { ...rest };
 });
-
+const newColorFields1 = colorFields.map((color: any) => {
+  const { prevImage, ...rest } = color;
+  return {
+    ...rest,
+    image: Array.isArray(rest.image) ? rest.image : []
+  };
+});
 
     const formDataStore = { ...formData, colors: newColorFields };
-    const editFormDataStore = { ...formData, colors: fields, delete_image: deletedImages, id: id };
+    const editFormDataStore = { ...formData, colors: newColorFields1, delete_image: deletedImages, id: id };
     console.log("colorFields",colorFields);
     const valid = validation("addProduct", { ...formData, id: id });
     const isValid = validateColorFields(valid);
@@ -533,11 +566,11 @@ const newColorFields = colorFields.map((color: any) => {
   
     setColorFields((prevFields: any[]) =>
       prevFields.map((item, i) =>
-        i === index ? { ...item, image: [...(item.image || []), ...files] ,prevImage: [...(item.image || []), ...newImages]} : item
+        i === index ? { ...item, image: [...(item.image || []), ...files] ,prevImage: [...(item.prevImage || []), ...newImages]} : item
       )
     );
   };
-  const removeImage_1 = (colorIndex: number, imgIndex: number) => {
+  const removeImage_1 = (colorIndex: number, imgIndex: number,img : any) => {
     setColorFields((prevFields: any[]) =>
       prevFields.map((item, i) =>
         i === colorIndex
@@ -545,6 +578,13 @@ const newColorFields = colorFields.map((color: any) => {
           : item
       )
     );
+    if(img){
+      if(typeof img !== 'object'){
+        const delImg = [...deletedImages,img]
+        setDeletedImages(delImg)
+
+      }
+    }
   };
   const numberRestrictions = (event: any) => {
     if ((event.charCode >= 40 && event.charCode <= 57) || event.charCode === 46) {
@@ -588,7 +628,7 @@ const newColorFields = colorFields.map((color: any) => {
     console.log("colorIndexcolorIndex",colorIndex,sizeIndex);
     setColorFields((prevFields: any[]) => {
       console.log("prevFierl",prevFields);
-      prevFields.map((colorField, i) =>
+      prevFields?.map((colorField, i) =>
         i === colorIndex
           ? { ...colorField, size_and_price: colorField.size_and_price.filter((_: any, j: number) => j !== sizeIndex) }
           : colorField
@@ -701,8 +741,8 @@ const newColorFields = colorFields.map((color: any) => {
                         + Add Price
                       </Button>
                     </Grid2>
-                    {colorFields.map((item: any, colorIndex: number) => {
-  console.log("colorFieldscolorFields", errors);
+                    {colorFields?.map((item: any, colorIndex: number) => {
+  console.log("colorFieldscolorFields", item);
   return (
     <>
       <Grid2 size={{ xs: 12, md: 12 }}>
@@ -750,8 +790,8 @@ const newColorFields = colorFields.map((color: any) => {
               {...provided.droppableProps}
               style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}
             >
-              {item?.prevImage?.map((img: { preview: any }, imgIndex: number) => (
-                <Draggable key={img.preview} draggableId={img.preview} index={imgIndex}>
+              {item?.prevImage?.map((img: any, imgIndex: number) => (
+                <Draggable key={img.preview || `${s3ImgUrl}${img}`} draggableId={img.preview || `${s3ImgUrl}${img}`} index={imgIndex}>
                   {(provided) => (
                     <div
                       ref={provided.innerRef}
@@ -764,7 +804,7 @@ const newColorFields = colorFields.map((color: any) => {
                       }}
                     >
                       <img
-                        src={img.preview}
+                        src={img.preview || `${s3ImgUrl}${img}`}
                         alt="Draggable"
                         style={{
                           width: 100,
@@ -775,7 +815,7 @@ const newColorFields = colorFields.map((color: any) => {
                         }}
                       />
                       <button
-                        onClick={() => removeImage_1(colorIndex, imgIndex)}
+                        onClick={() => removeImage_1(colorIndex, imgIndex,img)}
                         style={{
                           position: "absolute",
                           top: -5,
@@ -803,7 +843,7 @@ const newColorFields = colorFields.map((color: any) => {
           )}
         </Droppable>
       </DragDropContext>
-      {item.size_and_price.map(
+      {item.size_and_price?.map(
         (
           sizeItem: { size: any; price: any; discount: any; available_count: any },
           sizeIndex: any
@@ -920,7 +960,7 @@ const newColorFields = colorFields.map((color: any) => {
                               flexWrap: "wrap",
                             }}
                           >
-                            {imagesMap.map((src: any, index: any) => (
+                            {imagesMap?.map((src: any, index: any) => (
                               <Draggable key={src} draggableId={src} index={index}>
                                 {(provided) => (
                                   <div
