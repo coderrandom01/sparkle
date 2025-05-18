@@ -48,6 +48,8 @@ export default function ProductDetails() {
   const [activeImg, setActiveImg] = useState(0);
   const [productSize, setProductSize] = useState("s");
   const [productCount, setProductCount] = useState(1);
+  const [selectedProduct, setSelectedProduct] = useState<any>();
+
   const [sizes,setSizes] = useState([])
   const { id } = useParams();
 
@@ -103,11 +105,14 @@ export default function ProductDetails() {
           useEffect(() => {
             // console.log("datadata",data.getProductById.responce) // Check this data
             if(data?.getProductById){
+              const dataa = data.getProductById.responce
               setProductData(data.getProductById.responce)
-              const sizes = data.getProductById.responce.size_and_price.map((item: { size: any; }) => item.size); 
-              // setProductSize(sizes[0])
-              handleSizeSelection(sizes[0], data.getProductById.responce)
-              setSizes(sizes)
+              setSelectedProduct(dataa.colors[0])
+              console.log("data.getProductById.responcedata.getProductById.responce",data.getProductById.responce);
+              // const sizes = data.getProductById.responce.size_and_price.map((item: { size: any; }) => item.size); 
+              // // setProductSize(sizes[0])
+              // handleSizeSelection(sizes[0], data.getProductById.responce)
+              // setSizes(sizes)
 
               estimatedDelivery()
             }
@@ -159,7 +164,7 @@ export default function ProductDetails() {
           <div>
             <div className="flex justify-center space-x-3 h-full">
               <div className="flex w-14 flex-col gap-4 order-last md:order-first">
-                {productData?.image.slice(0, 5).map((item: any, index: number) => {
+                {selectedProduct?.image.slice(0, 5).map((item: any, index: number) => {
                   if (activeImg === index) return <></>;
                   return <img onClick={() => setActiveImg(index)} className="h-10 md:h-20 rounded-sm cursor-pointer" src={s3ImgUrl+item} alt="product" />;
                 })}
@@ -168,7 +173,7 @@ export default function ProductDetails() {
                 <div
                   className="h-[90%] bg-cover"
                   style={{
-                    backgroundImage: s3ImgUrl+productData.image[activeImg] ? `url(${s3ImgUrl+productData.image[activeImg]})` : "none",
+                    backgroundImage: s3ImgUrl+selectedProduct?.image[activeImg] ? `url(${s3ImgUrl+selectedProduct?.image[activeImg]})` : "none",
                   }}
                 ></div>
                 <div className="grid grid-cols-2 gap-2">
@@ -187,10 +192,10 @@ export default function ProductDetails() {
                 </div>
                 <div>
                   <ul className="flex space-x-2">
-                    <li>₹ {selectedPriceDetails?.display_price}</li>
+                    <li>₹ {selectedProduct?.size_and_price[0].display_price}</li>
                     <li className="space-x-1">
-                      <span className="line-through text-gray-400">₹ {selectedPriceDetails?.price}</span>
-                      <span className="text-red-700">{`(${selectedPriceDetails?.discount}% off)`}</span>
+                      <span className="line-through text-gray-400">₹ {selectedProduct?.size_and_price[0].price}</span>
+                      <span className="text-red-700">{`(${selectedProduct?.size_and_price[0].discount}% off)`}</span>
                     </li>
                   </ul>
                 </div>

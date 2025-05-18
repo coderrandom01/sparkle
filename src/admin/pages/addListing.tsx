@@ -738,7 +738,7 @@ const newColorFields1 = colorFields.map((color: any) => {
                     <Grid2 size={{ xs: 12, md: 3 }} className="mtb10">
                       <Button wid100 cancelBtn onClick={handleAddFields}>
                         {" "}
-                        + Add Price
+                        + Add Color
                       </Button>
                     </Grid2>
                     {colorFields?.map((item: any, colorIndex: number) => {
